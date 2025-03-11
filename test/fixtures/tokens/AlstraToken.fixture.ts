@@ -1,6 +1,6 @@
 // test/fixtures/tokens/AlstraToken.fixture.ts
 import { deployments, ethers, getNamedAccounts } from 'hardhat';
-import { AlstraToken } from '../../../typechain/contracts/protocol/tokens/AlstraToken';
+import { AlstraToken } from '../../../typechain/contracts/protocol/governance/AlstraToken';
 
 /**
  * Fixture specifically for AlstraToken tests

@@ -9,7 +9,8 @@
     "resolveJsonModule": true,
     "typeRoots": [
       "node_modules/@types",
-      "typechain"
+      "typechain",
+      "types"  // Added custom types directory
     ]
   },
   "include": [
@@ -17,6 +18,7 @@
     "./scripts",
     "./deploy",
     "./test",
-    "./typechain/**/*"
+    "./typechain/**/*",
+    "./types/**/*"  // Added types directory
   ]
 }
