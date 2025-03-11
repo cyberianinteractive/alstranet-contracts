@@ -317,55 +317,62 @@ describe("AlstraToken", function () {
             const initialUnlock = 1000n; // 10%
             const cliff = 90 * 24 * 60 * 60; // 90 days
             const duration = 365 * 24 * 60 * 60; // 1 year
-
-            // Get current block timestamp to add for vestingStartTime
-            const currentBlockTimestamp = Math.floor(Date.now() / 1000) + 100; // Add 100 seconds to ensure it's in the future
-
+    
+            // Get current block timestamp and add a larger buffer
+            // Use the blockchain's timestamp directly
+            const latestBlock = await ethers.provider.getBlock('latest');
+            const currentBlockchainTimestamp = latestBlock!.timestamp;
+            const futureStartTime = currentBlockchainTimestamp + 3600; // Add 1 hour to ensure it's in the future
+    
             const tx = await alstraTokenAsVestingManager.createVestingSchedule(
                 user3Address,
                 vestAmount,
-                currentBlockTimestamp,
+                futureStartTime,
                 cliff,
                 duration,
                 initialUnlock,
                 true, // revocable
                 0 // ValidatorRewards category
             );
-
+    
             const receipt = await tx.wait();
             const eventLog = receipt?.logs.find(log => 
                 log instanceof EventLog && 
                 log.fragment.name === 'VestingScheduleCreated' &&
                 log.args[0] === user3Address
             ) as EventLog | undefined;
-
+    
             const scheduleId = eventLog?.args?.scheduleId;
             expect(scheduleId).to.not.be.undefined;
-
+    
             // Check vesting schedule was created
             const schedule = await alstraToken.vestingSchedules(user3Address, scheduleId);
             expect(schedule.totalAmount).to.equal(vestAmount);
-            expect(schedule.startTime).to.equal(currentBlockTimestamp);
+            expect(schedule.startTime).to.equal(futureStartTime);
             expect(schedule.cliff).to.equal(cliff);
             expect(schedule.duration).to.equal(duration);
             expect(schedule.initialUnlock).to.equal(initialUnlock);
             expect(schedule.revocable).to.be.true;
             expect(schedule.revoked).to.be.false;
-
+    
             // Check initial unlock was transferred
             const initialUnlockAmount = (vestAmount * initialUnlock) / constants.feeDenominator;
             expect(schedule.released).to.equal(initialUnlockAmount);
         });
-
+    
         it("should prevent non-vesting managers from creating schedules", async function () {
             const alstraTokenAsUser = alstraToken.connect(user1);
             const vestAmount = ethers.parseEther("10000");
-            const startTime = Math.floor(Date.now() / 1000) + 100;
-
+            
+            // Use the blockchain's timestamp directly
+            const latestBlock = await ethers.provider.getBlock('latest');
+            const currentBlockchainTimestamp = latestBlock!.timestamp;
+            const futureStartTime = currentBlockchainTimestamp + 3600; // Add 1 hour to ensure it's in the future
+    
             await expect(alstraTokenAsUser.createVestingSchedule(
                 user3Address,
                 vestAmount,
-                startTime,
+                futureStartTime,
                 0,
                 365 * 24 * 60 * 60,
                 1000, // 10%
@@ -374,19 +381,23 @@ describe("AlstraToken", function () {
             )).to.be.revertedWithCustomError(alstraToken, "AccessControlUnauthorizedAccount")
                 .withArgs(user1Address, roles.VESTING_MANAGER_ROLE);
         });
-
+    
         it("should respect allocation limits for vesting categories", async function () {
             const alstraTokenAsVestingManager = alstraToken.connect(vestingManager);
             const totalSupply = await alstraToken.TOTAL_SUPPLY();
-
+    
             // Try to allocate more than the allowed 40% to ValidatorRewards
             const excessiveAmount = (totalSupply * 41n) / 100n;
-            const startTime = Math.floor(Date.now() / 1000) + 100;
-
+            
+            // Use the blockchain's timestamp directly
+            const latestBlock = await ethers.provider.getBlock('latest');
+            const currentBlockchainTimestamp = latestBlock!.timestamp;
+            const futureStartTime = currentBlockchainTimestamp + 3600; // Add 1 hour to ensure it's in the future
+    
             await expect(alstraTokenAsVestingManager.createVestingSchedule(
                 user3Address,
                 excessiveAmount,
-                startTime,
+                futureStartTime,
                 0,
                 365 * 24 * 60 * 60,
                 0, // 0% initial unlock
