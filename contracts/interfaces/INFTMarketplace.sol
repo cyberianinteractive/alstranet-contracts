@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {IFactionRegistry} from "./interfaces/IFactionRegistry.sol";
-import {ITerritoryRegistry} from "./interfaces/ITerritoryRegistry.sol";
-import {ITreasuryManagement} from "./interfaces/ITreasuryManagement.sol";
+import {IFactionRegistry} from "./IFactionRegistry.sol";
+import {ITerritoryRegistry} from "./ITerritoryRegistry.sol";
+import {ITreasuryManagement} from "./ITreasuryManagement.sol";
 
 /**
  * @title INFTMarketplace
