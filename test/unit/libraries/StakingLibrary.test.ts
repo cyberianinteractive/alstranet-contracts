@@ -1,28 +1,46 @@
-// test/StakingLibrary.test.ts
+// test/StakingLibraryTestWrapper.test.ts
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, deployments } from "hardhat";
+import { StakingLibraryTestWrapper } from "../../../typechain/contracts/test/StakingLibraryTestWrapper";
 
-describe("StakingLibrary", function () {
-    let stakingLibrary: any;
+describe("StakingLibrary (via TestWrapper)", function () {
+    let stakingLibraryWrapper: StakingLibraryTestWrapper;
 
-    // Constants to match those in the library
-    const PRECISION = 10n ** 18n;
-    const SECONDS_IN_DAY = 86400n;
-    const SECONDS_IN_YEAR = 365n * SECONDS_IN_DAY;
-    const MIN_STAKE_PERIOD = 7n * SECONDS_IN_DAY;
-    const MAX_STAKE_PERIOD = 365n * SECONDS_IN_DAY;
-    const MIN_PENALTY = PRECISION * 5n / 100n; // 5%
-    const MAX_PENALTY = PRECISION * 50n / 100n; // 50%
+    // We'll get the constants from the wrapper
+    let PRECISION: bigint;
+    let SECONDS_IN_DAY: bigint;
+    let SECONDS_IN_YEAR: bigint;
+    let MIN_STAKE_PERIOD: bigint;
+    let MAX_STAKE_PERIOD: bigint;
+    let MIN_PENALTY: bigint;
+    let MAX_PENALTY: bigint;
 
     before(async function () {
-        // Deploy the StakingLibrary
-        const StakingLibraryFactory = await ethers.getContractFactory("StakingLibrary");
-        stakingLibrary = await StakingLibraryFactory.deploy();
+        // Deploy all contracts with the TestWrappers tag
+        await deployments.fixture(["TestWrappers"]);
+        
+        // Get the deployed StakingLibraryTestWrapper
+        const stakingLibraryWrapperDeployment = await deployments.get("StakingLibraryTestWrapper");
+        
+        // Get the contract instance
+        stakingLibraryWrapper = await ethers.getContractAt(
+            "StakingLibraryTestWrapper", 
+            stakingLibraryWrapperDeployment.address
+        );
+
+        // Get constants from the wrapper
+        PRECISION = await stakingLibraryWrapper.getPRECISION();
+        SECONDS_IN_DAY = await stakingLibraryWrapper.getSECONDS_IN_DAY();
+        SECONDS_IN_YEAR = await stakingLibraryWrapper.getSECONDS_IN_YEAR();
+        MIN_STAKE_PERIOD = await stakingLibraryWrapper.getMIN_STAKE_PERIOD();
+        MAX_STAKE_PERIOD = await stakingLibraryWrapper.getMAX_STAKE_PERIOD();
+        MIN_PENALTY = await stakingLibraryWrapper.getMIN_PENALTY();
+        MAX_PENALTY = await stakingLibraryWrapper.getMAX_PENALTY();
     });
 
     describe("calculateStakingReward", function () {
         it("should return 0 for zero stake amount", async function () {
-            const reward = await stakingLibrary.calculateStakingReward(
+            const reward = await stakingLibraryWrapper.calculateStakingReward(
                 0n, // stakeAmount
                 SECONDS_IN_DAY * 30n, // 30 days
                 1000n, // territoryValue
@@ -33,7 +51,7 @@ describe("StakingLibrary", function () {
         });
 
         it("should return 0 for zero stake duration", async function () {
-            const reward = await stakingLibrary.calculateStakingReward(
+            const reward = await stakingLibraryWrapper.calculateStakingReward(
                 ethers.parseEther("100"), // stakeAmount
                 0n, // 0 duration
                 1000n, // territoryValue
@@ -50,7 +68,7 @@ describe("StakingLibrary", function () {
             const baseRewardRate = PRECISION * 10n / 100n; // 10% annual rate
             const factionBonus = 5; // 5% faction bonus
 
-            const reward = await stakingLibrary.calculateStakingReward(
+            const reward = await stakingLibraryWrapper.calculateStakingReward(
                 stakeAmount,
                 stakeDuration,
                 territoryValue,
@@ -78,7 +96,7 @@ describe("StakingLibrary", function () {
             const baseRewardRate = PRECISION * 10n / 100n; // 10% annual rate
             const factionBonus = 5; // 5% faction bonus
 
-            const reward = await stakingLibrary.calculateStakingReward(
+            const reward = await stakingLibraryWrapper.calculateStakingReward(
                 stakeAmount,
                 stakeDuration,
                 territoryValue,
@@ -88,7 +106,7 @@ describe("StakingLibrary", function () {
 
             // With a very high territory value, the multiplier should cap at 2x
             // Expected reward should be higher than with the normal territory value
-            const normalReward = await stakingLibrary.calculateStakingReward(
+            const normalReward = await stakingLibraryWrapper.calculateStakingReward(
                 stakeAmount,
                 stakeDuration,
                 1000n, // normal territory value
@@ -108,7 +126,7 @@ describe("StakingLibrary", function () {
             const baseRewardRate = PRECISION * 10n / 100n; // 10% annual rate
 
             // Test with 0% faction bonus
-            const rewardWithNoBonus = await stakingLibrary.calculateStakingReward(
+            const rewardWithNoBonus = await stakingLibraryWrapper.calculateStakingReward(
                 stakeAmount,
                 stakeDuration,
                 territoryValue,
@@ -117,7 +135,7 @@ describe("StakingLibrary", function () {
             );
 
             // Test with 20% faction bonus
-            const rewardWithBonus = await stakingLibrary.calculateStakingReward(
+            const rewardWithBonus = await stakingLibraryWrapper.calculateStakingReward(
                 stakeAmount,
                 stakeDuration,
                 territoryValue,
@@ -145,7 +163,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 0n;
             const controlThreshold = 50; // 50%
 
-            const result = await stakingLibrary.calculateControllingFaction(
+            const result = await stakingLibraryWrapper.calculateControllingFaction(
                 factionStakes,
                 totalStaked,
                 controlThreshold
@@ -161,7 +179,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 1000n;
             const controlThreshold = 50; // 50%
 
-            const result = await stakingLibrary.calculateControllingFaction(
+            const result = await stakingLibraryWrapper.calculateControllingFaction(
                 factionStakes,
                 totalStaked,
                 controlThreshold
@@ -177,7 +195,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 1000n;
             const controlThreshold = 50; // 50%
 
-            const result = await stakingLibrary.calculateControllingFaction(
+            const result = await stakingLibraryWrapper.calculateControllingFaction(
                 factionStakes,
                 totalStaked,
                 controlThreshold
@@ -194,7 +212,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 1000n;
             const controlThreshold = 40; // 40%
 
-            const result = await stakingLibrary.calculateControllingFaction(
+            const result = await stakingLibraryWrapper.calculateControllingFaction(
                 factionStakes,
                 totalStaked,
                 controlThreshold
@@ -212,7 +230,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 0n;
             const contestThreshold = 10; // 10%
 
-            const result = await stakingLibrary.evaluateContestedStatus(
+            const result = await stakingLibraryWrapper.evaluateContestedStatus(
                 factionStakes,
                 totalStaked,
                 contestThreshold
@@ -228,7 +246,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 1000n;
             const contestThreshold = 10; // 10%
 
-            const result = await stakingLibrary.evaluateContestedStatus(
+            const result = await stakingLibraryWrapper.evaluateContestedStatus(
                 factionStakes,
                 totalStaked,
                 contestThreshold
@@ -245,7 +263,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 1000n;
             const contestThreshold = 10; // 10%
 
-            const result = await stakingLibrary.evaluateContestedStatus(
+            const result = await stakingLibraryWrapper.evaluateContestedStatus(
                 factionStakes,
                 totalStaked,
                 contestThreshold
@@ -263,7 +281,7 @@ describe("StakingLibrary", function () {
             const totalStaked = 1000n;
             const contestThreshold = 20; // 20%
 
-            const result = await stakingLibrary.evaluateContestedStatus(
+            const result = await stakingLibraryWrapper.evaluateContestedStatus(
                 factionStakes,
                 totalStaked,
                 contestThreshold
@@ -282,7 +300,7 @@ describe("StakingLibrary", function () {
             const originalStakePeriod = SECONDS_IN_DAY * 30n; // 30 days
             const timeStaked = SECONDS_IN_DAY * 30n; // Fully staked
 
-            const penalty = await stakingLibrary.calculateEmergencyWithdrawalPenalty(
+            const penalty = await stakingLibraryWrapper.calculateEmergencyWithdrawalPenalty(
                 originalStakePeriod,
                 timeStaked
             );
@@ -294,7 +312,7 @@ describe("StakingLibrary", function () {
             const originalStakePeriod = SECONDS_IN_DAY * 30n; // 30 days
             const timeStaked = 0n; // Just staked
 
-            const penalty = await stakingLibrary.calculateEmergencyWithdrawalPenalty(
+            const penalty = await stakingLibraryWrapper.calculateEmergencyWithdrawalPenalty(
                 originalStakePeriod,
                 timeStaked
             );
@@ -307,7 +325,7 @@ describe("StakingLibrary", function () {
             const originalStakePeriod = SECONDS_IN_DAY * 30n; // 30 days
             const timeStaked = SECONDS_IN_DAY * 15n; // Half way through
 
-            const penalty = await stakingLibrary.calculateEmergencyWithdrawalPenalty(
+            const penalty = await stakingLibraryWrapper.calculateEmergencyWithdrawalPenalty(
                 originalStakePeriod,
                 timeStaked
             );
@@ -324,7 +342,7 @@ describe("StakingLibrary", function () {
             const originalStakePeriod = SECONDS_IN_DAY * 30n; // 30 days
             const timeStaked = SECONDS_IN_DAY * 40n; // More than original period
 
-            const penalty = await stakingLibrary.calculateEmergencyWithdrawalPenalty(
+            const penalty = await stakingLibraryWrapper.calculateEmergencyWithdrawalPenalty(
                 originalStakePeriod,
                 timeStaked
             );
@@ -338,7 +356,7 @@ describe("StakingLibrary", function () {
             const stakePeriod = MIN_STAKE_PERIOD;
             const factionBonus = 0n;
 
-            const multiplier = await stakingLibrary.calculateStakePeriodMultiplier(
+            const multiplier = await stakingLibraryWrapper.calculateStakePeriodMultiplier(
                 stakePeriod,
                 factionBonus
             );
@@ -350,7 +368,7 @@ describe("StakingLibrary", function () {
             const stakePeriod = MIN_STAKE_PERIOD - 1n; // Just below minimum
             const factionBonus = 0n;
 
-            const multiplier = await stakingLibrary.calculateStakePeriodMultiplier(
+            const multiplier = await stakingLibraryWrapper.calculateStakePeriodMultiplier(
                 stakePeriod,
                 factionBonus
             );
@@ -363,7 +381,7 @@ describe("StakingLibrary", function () {
             const stakePeriod = MIN_STAKE_PERIOD + (MAX_STAKE_PERIOD - MIN_STAKE_PERIOD) / 2n;
             const factionBonus = 0n;
 
-            const multiplier = await stakingLibrary.calculateStakePeriodMultiplier(
+            const multiplier = await stakingLibraryWrapper.calculateStakePeriodMultiplier(
                 stakePeriod,
                 factionBonus
             );
@@ -380,7 +398,7 @@ describe("StakingLibrary", function () {
             const stakePeriod = MAX_STAKE_PERIOD * 2n; // Double the maximum
             const factionBonus = 0n;
 
-            const multiplier = await stakingLibrary.calculateStakePeriodMultiplier(
+            const multiplier = await stakingLibraryWrapper.calculateStakePeriodMultiplier(
                 stakePeriod,
                 factionBonus
             );
@@ -395,7 +413,7 @@ describe("StakingLibrary", function () {
             const stakePeriod = MAX_STAKE_PERIOD; // Max period for 2x base multiplier
             const factionBonus = 20n; // 20% faction bonus
 
-            const multiplier = await stakingLibrary.calculateStakePeriodMultiplier(
+            const multiplier = await stakingLibraryWrapper.calculateStakePeriodMultiplier(
                 stakePeriod,
                 factionBonus
             );
@@ -411,7 +429,7 @@ describe("StakingLibrary", function () {
             const stakePeriod = MAX_STAKE_PERIOD; // Max period for 2x base multiplier
             const factionBonus = 100n; // 100% faction bonus (very high)
 
-            const multiplier = await stakingLibrary.calculateStakePeriodMultiplier(
+            const multiplier = await stakingLibraryWrapper.calculateStakePeriodMultiplier(
                 stakePeriod,
                 factionBonus
             );

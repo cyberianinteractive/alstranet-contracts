@@ -8,20 +8,20 @@ pragma solidity ^0.8.22;
  */
 library StakingLibrary {
     // Single precision constant for all calculations
-    uint256 public constant PRECISION = 1e18;
+    uint256 internal constant PRECISION = 1e18;
 
     // Time constants
-    uint256 public constant SECONDS_IN_DAY = 86400;
-    uint256 public constant SECONDS_IN_YEAR = 365 * SECONDS_IN_DAY;
+    uint256 internal constant SECONDS_IN_DAY = 86400;
+    uint256 internal constant SECONDS_IN_YEAR = 365 * SECONDS_IN_DAY;
 
     // Staking parameters
-    uint256 public constant MIN_STAKE_PERIOD = 7 * SECONDS_IN_DAY; // 7 days
-    uint256 public constant MAX_STAKE_PERIOD = 365 * SECONDS_IN_DAY; // 1 year
-    uint256 public constant MAX_MULTIPLIER = 3 * PRECISION; // 3x max multiplier
+    uint256 internal constant MIN_STAKE_PERIOD = 7 * SECONDS_IN_DAY; // 7 days
+    uint256 internal constant MAX_STAKE_PERIOD = 365 * SECONDS_IN_DAY; // 1 year
+    uint256 internal constant MAX_MULTIPLIER = 3 * PRECISION; // 3x max multiplier
 
     // Emergency withdrawal parameters
-    uint256 public constant MIN_PENALTY = (5 * PRECISION) / 100; // 5%
-    uint256 public constant MAX_PENALTY = (50 * PRECISION) / 100; // 50%
+    uint256 internal constant MIN_PENALTY = (5 * PRECISION) / 100; // 5%
+    uint256 internal constant MAX_PENALTY = (50 * PRECISION) / 100; // 50%
 
     /**
      * @dev Calculates staking rewards based on amount, duration and territory value
@@ -38,7 +38,7 @@ library StakingLibrary {
         uint256 territoryValue,
         uint256 baseRewardRate,
         uint8 factionBonus
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         // Early return for zero values
         if (stakeAmount == 0 || stakeDuration == 0) {
             return 0;
@@ -89,7 +89,7 @@ library StakingLibrary {
         uint256 totalStaked,
         uint8 controlThreshold
     )
-        public
+        internal
         pure
         returns (
             uint8 controllingFaction,
@@ -142,7 +142,7 @@ library StakingLibrary {
         uint256 totalStaked,
         uint8 contestThreshold
     )
-        public
+        internal
         pure
         returns (
             bool isContested,
@@ -201,7 +201,7 @@ library StakingLibrary {
     function calculateEmergencyWithdrawalPenalty(
         uint256 originalStakePeriod,
         uint256 timeStaked
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         // No penalty if stake period is complete
         if (timeStaked >= originalStakePeriod) {
             return 0;
@@ -226,7 +226,7 @@ library StakingLibrary {
     function calculateStakePeriodMultiplier(
         uint256 stakePeriod,
         uint256 factionBonus
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         // No multiplier for periods shorter than minimum
         if (stakePeriod < MIN_STAKE_PERIOD) {
             return PRECISION; // 1x multiplier

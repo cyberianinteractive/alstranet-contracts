@@ -9,30 +9,30 @@ pragma solidity ^0.8.22;
  */
 library FactionLibrary {
     // Constants for faction IDs
-    uint8 public constant NO_FACTION = 0;
-    uint8 public constant LAW_ENFORCEMENT = 1;
-    uint8 public constant CRIMINAL_SYNDICATE = 2;
-    uint8 public constant VIGILANTE = 3;
-    uint8 public constant FACTION_COUNT = 3;
+    uint8 internal constant NO_FACTION = 0;
+    uint8 internal constant LAW_ENFORCEMENT = 1;
+    uint8 internal constant CRIMINAL_SYNDICATE = 2;
+    uint8 internal constant VIGILANTE = 3;
+    uint8 internal constant FACTION_COUNT = 3;
 
     // Constants for rank limits
-    uint8 public constant MIN_RANK = 1;
-    uint8 public constant MAX_RANK = 10;
+    uint8 internal constant MIN_RANK = 1;
+    uint8 internal constant MAX_RANK = 10;
 
     // Constants for action types
-    uint8 public constant ACTION_MISSION_COMPLETE = 1;
-    uint8 public constant ACTION_TERRITORY_CONTROL = 2;
-    uint8 public constant ACTION_CRIMINAL_ACTIVITY = 3;
-    uint8 public constant ACTION_LAW_ENFORCEMENT = 4;
-    uint8 public constant ACTION_COMMUNITY_SERVICE = 5;
-    uint8 public constant ACTION_BETRAYAL = 6;
-    uint8 public constant ACTION_FACTION_SUPPORT = 7;
+    uint8 internal constant ACTION_MISSION_COMPLETE = 1;
+    uint8 internal constant ACTION_TERRITORY_CONTROL = 2;
+    uint8 internal constant ACTION_CRIMINAL_ACTIVITY = 3;
+    uint8 internal constant ACTION_LAW_ENFORCEMENT = 4;
+    uint8 internal constant ACTION_COMMUNITY_SERVICE = 5;
+    uint8 internal constant ACTION_BETRAYAL = 6;
+    uint8 internal constant ACTION_FACTION_SUPPORT = 7;
 
     // Struct for reputation requirements for ranks
     struct RankRequirements {
         uint256 reputationRequired;
         uint256 timeInFactionRequired; // in seconds
-        uint8 actionsRequired;
+        uint16 actionsRequired;
     }
 
     /**
@@ -48,7 +48,7 @@ library FactionLibrary {
         uint256 actionValue,
         uint256 currentReputation,
         uint8 factionId
-    ) public pure returns (uint256 newReputation) {
+    ) internal pure returns (uint256 newReputation) {
         // Start with current reputation
         newReputation = currentReputation;
 
@@ -138,7 +138,7 @@ library FactionLibrary {
         uint256 memberSince,
         uint8 actionsCompleted,
         uint8 factionId
-    ) public view returns (bool isEligible, uint8 newRank) {
+    ) internal view returns (bool isEligible, uint8 newRank) {
         // If already at max rank, cannot be promoted further
         if (currentRank >= MAX_RANK) {
             return (false, currentRank);
@@ -180,11 +180,11 @@ library FactionLibrary {
     function getRankRequirements(
         uint8 rank,
         uint8 factionId
-    ) public pure returns (RankRequirements memory requirements) {
+    ) internal pure returns (RankRequirements memory requirements) {
         // Base requirements that increase with rank
         uint256 baseReputation = 100 * uint256(rank) * uint256(rank);
         uint256 baseTimeRequired = 7 days * uint256(rank);
-        uint8 baseActionsRequired = rank * 5;
+        uint16 baseActionsRequired = rank * 5;
 
         // Apply faction-specific modifiers
         if (factionId == LAW_ENFORCEMENT) {
@@ -230,7 +230,7 @@ library FactionLibrary {
         uint256 memberReputation,
         uint8 roleId,
         uint8 factionId
-    ) public pure returns (bool) {
+    ) internal pure returns (bool) {
         // Get role requirements
         (uint8 requiredRank, uint256 requiredReputation) = getRoleRequirements(
             roleId,
@@ -252,7 +252,7 @@ library FactionLibrary {
     function getRoleRequirements(
         uint8 roleId,
         uint8 factionId
-    ) public pure returns (uint8 requiredRank, uint256 requiredReputation) {
+    ) internal pure returns (uint8 requiredRank, uint256 requiredReputation) {
         // Role IDs can vary by faction, but we'll define some standard roles here
 
         // Leadership roles (1-10)
@@ -325,7 +325,7 @@ library FactionLibrary {
         uint256 territoriesControlled,
         uint256 resourcesControlled,
         uint256 averageMemberRank
-    ) public pure returns (uint256 influenceScore) {
+    ) internal pure returns (uint256 influenceScore) {
         // Base influence from member count (diminishing returns at higher counts)
         uint256 memberInfluence;
         if (memberCount <= 100) {
@@ -377,7 +377,7 @@ library FactionLibrary {
         uint256 defendingStrength,
         uint256 randomnessSeed
     )
-        public
+        internal
         pure
         returns (
             bool attackerWon,

@@ -9,14 +9,14 @@ pragma solidity ^0.8.22;
  */
 library TerritoryLibrary {
     // Constants for territory zone types
-    uint8 public constant HIGH_SECURITY_ZONE = 1;
-    uint8 public constant MEDIUM_SECURITY_ZONE = 2;
-    uint8 public constant NO_GO_ZONE = 3;
+    uint8 internal constant HIGH_SECURITY_ZONE = 1;
+    uint8 internal constant MEDIUM_SECURITY_ZONE = 2;
+    uint8 internal constant NO_GO_ZONE = 3;
 
     // Constants for calculating territory values
-    uint256 public constant CONTESTED_PENALTY_PERCENT = 20; // 20% value reduction when contested
-    uint256 public constant RESOURCE_VALUE_MULTIPLIER = 10; // Multiplier for resource value
-    uint256 public constant BLOCK_TIME_SECONDS = 2; // AlstraNet block time in seconds
+    uint256 internal constant CONTESTED_PENALTY_PERCENT = 20; // 20% value reduction when contested
+    uint256 internal constant RESOURCE_VALUE_MULTIPLIER = 10; // Multiplier for resource value
+    uint256 internal constant BLOCK_TIME_SECONDS = 2; // AlstraNet block time in seconds
 
     /**
      * @dev Calculates the current economic value of a territory based on various factors
@@ -35,7 +35,7 @@ library TerritoryLibrary {
         bool contestedStatus,
         uint256 lastUpdateBlock,
         uint256 currentBlock
-    ) public pure returns (uint256 value) {
+    ) internal pure returns (uint256 value) {
         // Start with the base value
         value = baseValue;
         
@@ -79,7 +79,7 @@ library TerritoryLibrary {
         uint256 lastUpdateBlock,
         uint256 currentBlock,
         uint8 controlModifier
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         // Ensure we don't calculate for future blocks
         if (currentBlock <= lastUpdateBlock) {
             return 0;
@@ -108,7 +108,7 @@ library TerritoryLibrary {
         uint256[] memory factionStakes,
         uint256 totalStaked,
         uint8 contestThreshold
-    ) public pure returns (
+    ) internal pure returns (
         bool isContested,
         uint8 dominantFaction,
         uint8 challengerFaction
@@ -169,7 +169,7 @@ library TerritoryLibrary {
         bool isContested,
         uint256 baseImpact,
         uint8 factionPresencePercentage
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         // Base impact proportional to presence
         uint256 impact = (baseImpact * factionPresencePercentage) / 100;
         
@@ -197,7 +197,7 @@ library TerritoryLibrary {
         uint8 zoneType,
         uint8 controllingFaction,
         bool isContested
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         // Base rates by zone type (in basis points)
         uint256 baseTaxRate;
         
@@ -241,7 +241,7 @@ library TerritoryLibrary {
         bool hasBorderConnection,
         uint8 territoryAZoneType,
         uint8 territoryBZoneType
-    ) public pure returns (uint8) {
+    ) internal pure returns (uint8) {
         // Not connected if distance is too great
         if (distanceScore > 100) {
             return 0;
@@ -281,7 +281,7 @@ library TerritoryLibrary {
         uint256 territoryCount,
         uint8[][] memory connectionScores,
         uint8 minimumConnectionStrength
-    ) public pure returns (
+    ) internal pure returns (
         uint256[][] memory adjacencyList,
         uint8[][] memory connectionStrengths
     ) {
@@ -334,7 +334,7 @@ library TerritoryLibrary {
         uint256[][] memory adjacencyList,
         uint8[][] memory connectionStrengths,
         uint8 flowPercentage
-    ) public pure returns (int256[] memory resourceFlows) {
+    ) internal pure returns (int256[] memory resourceFlows) {
         uint256 territoryCount = territoryResourceRates.length;
         resourceFlows = new int256[](territoryCount);
         

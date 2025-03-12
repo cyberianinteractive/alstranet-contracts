@@ -1,27 +1,35 @@
 // test/unit/libraries/TerritoryLibrary.test.ts
 import { expect } from "chai";
-import { ethers } from "hardhat";
-import { TerritoryLibrary } from "../../../typechain/contracts/protocol/libraries/TerritoryLibrary";
+import { ethers, deployments } from "hardhat";
+import { TerritoryLibraryTestWrapper } from "../../../typechain/contracts/test/TerritoryLibraryTestWrapper";
 
 describe("TerritoryLibrary", function () {
-    let territoryLibrary: TerritoryLibrary;
+    let territoryLibraryWrapper: TerritoryLibraryTestWrapper;
 
     before(async function () {
-        // Deploy the TerritoryLibrary for testing
-        const TerritoryLibraryFactory = await ethers.getContractFactory("TerritoryLibrary");
-        territoryLibrary = await TerritoryLibraryFactory.deploy() as TerritoryLibrary;
+        // Deploy using the deployment script via fixture
+        await deployments.fixture(["TestWrappers"]);
+
+        // Get the deployed TerritoryLibraryTestWrapper
+        const territoryLibraryWrapperDeployment = await deployments.get("TerritoryLibraryTestWrapper");
+
+        // Get the contract instance
+        territoryLibraryWrapper = await ethers.getContractAt(
+            "TerritoryLibraryTestWrapper",
+            territoryLibraryWrapperDeployment.address
+        ) as TerritoryLibraryTestWrapper;
     });
 
     describe("Territory Value Calculation", function () {
         it("should calculate territory value correctly for high security zone", async function () {
             const baseValue = 1000;
-            const zoneType = await territoryLibrary.HIGH_SECURITY_ZONE();
+            const zoneType = await territoryLibraryWrapper.HIGH_SECURITY_ZONE();
             const resourceRate = 10;
             const contestedStatus = false;
             const lastUpdateBlock = 100;
             const currentBlock = 200;
 
-            const value = await territoryLibrary.calculateTerritoryValue(
+            const value = await territoryLibraryWrapper.calculateTerritoryValue(
                 baseValue,
                 zoneType,
                 resourceRate,
@@ -40,13 +48,13 @@ describe("TerritoryLibrary", function () {
 
         it("should apply contested penalty to territory value", async function () {
             const baseValue = 1000;
-            const zoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE();
+            const zoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE();
             const resourceRate = 10;
             const contestedStatus = true; // Contested
             const lastUpdateBlock = 100;
             const currentBlock = 200;
 
-            const value = await territoryLibrary.calculateTerritoryValue(
+            const value = await territoryLibraryWrapper.calculateTerritoryValue(
                 baseValue,
                 zoneType,
                 resourceRate,
@@ -71,7 +79,7 @@ describe("TerritoryLibrary", function () {
             const currentBlock = 200;
             const controlModifier = 80; // 80% efficiency
 
-            const resources = await territoryLibrary.calculateGeneratedResources(
+            const resources = await territoryLibraryWrapper.calculateGeneratedResources(
                 resourceRate,
                 lastUpdateBlock,
                 currentBlock,
@@ -88,7 +96,7 @@ describe("TerritoryLibrary", function () {
             const currentBlock = 100;
             const controlModifier = 100;
 
-            const resources = await territoryLibrary.calculateGeneratedResources(
+            const resources = await territoryLibraryWrapper.calculateGeneratedResources(
                 resourceRate,
                 lastUpdateBlock,
                 currentBlock,
@@ -106,7 +114,7 @@ describe("TerritoryLibrary", function () {
             const totalStaked = 100;
             const contestThreshold = 10; // 10% threshold for contest
 
-            const [isContested, dominantFaction, challengerFaction] = await territoryLibrary.determineContestedStatus(
+            const [isContested, dominantFaction, challengerFaction] = await territoryLibraryWrapper.determineContestedStatus(
                 factionStakes,
                 totalStaked,
                 contestThreshold
@@ -123,7 +131,7 @@ describe("TerritoryLibrary", function () {
             const totalStaked = 100;
             const contestThreshold = 10; // 10% threshold for contest
 
-            const [isContested, dominantFaction, challengerFaction] = await territoryLibrary.determineContestedStatus(
+            const [isContested, dominantFaction, challengerFaction] = await territoryLibraryWrapper.determineContestedStatus(
                 factionStakes,
                 totalStaked,
                 contestThreshold
@@ -139,7 +147,7 @@ describe("TerritoryLibrary", function () {
             const totalStaked = 0;
             const contestThreshold = 10;
 
-            const [isContested, dominantFaction, challengerFaction] = await territoryLibrary.determineContestedStatus(
+            const [isContested, dominantFaction, challengerFaction] = await territoryLibraryWrapper.determineContestedStatus(
                 factionStakes,
                 totalStaked,
                 contestThreshold
@@ -159,7 +167,7 @@ describe("TerritoryLibrary", function () {
             const baseImpact = 1000;
             const factionPresencePercentage = 60;
 
-            const impact = await territoryLibrary.calculateEconomicImpact(
+            const impact = await territoryLibraryWrapper.calculateEconomicImpact(
                 factionId,
                 controllingFaction,
                 isContested,
@@ -178,7 +186,7 @@ describe("TerritoryLibrary", function () {
             const baseImpact = 1000;
             const factionPresencePercentage = 60;
 
-            const impact = await territoryLibrary.calculateEconomicImpact(
+            const impact = await territoryLibraryWrapper.calculateEconomicImpact(
                 factionId,
                 controllingFaction,
                 isContested,
@@ -193,11 +201,11 @@ describe("TerritoryLibrary", function () {
 
     describe("Territory Tax Rate", function () {
         it("should calculate higher tax rate for Law Enforcement controlled territories", async function () {
-            const zoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE();
+            const zoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE();
             const controllingFaction = 1; // Law Enforcement
             const isContested = false;
 
-            const taxRate = await territoryLibrary.calculateTerritoryTaxRate(
+            const taxRate = await territoryLibraryWrapper.calculateTerritoryTaxRate(
                 zoneType,
                 controllingFaction,
                 isContested
@@ -210,11 +218,11 @@ describe("TerritoryLibrary", function () {
         });
 
         it("should calculate lower tax rate for Criminal controlled territories", async function () {
-            const zoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE();
+            const zoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE();
             const controllingFaction = 2; // Criminal Syndicate
             const isContested = false;
 
-            const taxRate = await territoryLibrary.calculateTerritoryTaxRate(
+            const taxRate = await territoryLibraryWrapper.calculateTerritoryTaxRate(
                 zoneType,
                 controllingFaction,
                 isContested
@@ -227,11 +235,11 @@ describe("TerritoryLibrary", function () {
         });
 
         it("should increase tax rate for contested territories", async function () {
-            const zoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE();
+            const zoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE();
             const controllingFaction = 3; // Vigilante
             const isContested = true; // Contested
 
-            const taxRate = await territoryLibrary.calculateTerritoryTaxRate(
+            const taxRate = await territoryLibraryWrapper.calculateTerritoryTaxRate(
                 zoneType,
                 controllingFaction,
                 isContested
@@ -249,10 +257,10 @@ describe("TerritoryLibrary", function () {
         it("should calculate strong connection for territories with border connection", async function () {
             const distanceScore = 20; // Low distance (closer)
             const hasBorderConnection = true;
-            const territoryAZoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE();
-            const territoryBZoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE(); // Same zone type
+            const territoryAZoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE();
+            const territoryBZoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE(); // Same zone type
 
-            const connectionScore = await territoryLibrary.calculateTerritoryConnection(
+            const connectionScore = await territoryLibraryWrapper.calculateTerritoryConnection(
                 distanceScore,
                 hasBorderConnection,
                 territoryAZoneType,
@@ -269,10 +277,10 @@ describe("TerritoryLibrary", function () {
         it("should calculate weak connection for distant territories of incompatible types", async function () {
             const distanceScore = 80; // High distance (farther)
             const hasBorderConnection = false;
-            const territoryAZoneType = await territoryLibrary.HIGH_SECURITY_ZONE();
-            const territoryBZoneType = await territoryLibrary.NO_GO_ZONE(); // Incompatible zone types
+            const territoryAZoneType = await territoryLibraryWrapper.HIGH_SECURITY_ZONE();
+            const territoryBZoneType = await territoryLibraryWrapper.NO_GO_ZONE(); // Incompatible zone types
 
-            const connectionScore = await territoryLibrary.calculateTerritoryConnection(
+            const connectionScore = await territoryLibraryWrapper.calculateTerritoryConnection(
                 distanceScore,
                 hasBorderConnection,
                 territoryAZoneType,
@@ -288,10 +296,10 @@ describe("TerritoryLibrary", function () {
         it("should return zero for territories that are too far apart", async function () {
             const distanceScore = 120; // Beyond maximum distance
             const hasBorderConnection = false;
-            const territoryAZoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE();
-            const territoryBZoneType = await territoryLibrary.MEDIUM_SECURITY_ZONE();
+            const territoryAZoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE();
+            const territoryBZoneType = await territoryLibraryWrapper.MEDIUM_SECURITY_ZONE();
 
-            const connectionScore = await territoryLibrary.calculateTerritoryConnection(
+            const connectionScore = await territoryLibraryWrapper.calculateTerritoryConnection(
                 distanceScore,
                 hasBorderConnection,
                 territoryAZoneType,
@@ -314,7 +322,7 @@ describe("TerritoryLibrary", function () {
 
             const minimumConnectionStrength = 50; // Only strong connections count
 
-            const [adjacencyList, connectionStrengths] = await territoryLibrary.mapTerritoryConnections(
+            const [adjacencyList, connectionStrengths] = await territoryLibraryWrapper.mapTerritoryConnections(
                 3, // 3 territories
                 connectionScores,
                 minimumConnectionStrength
@@ -368,7 +376,7 @@ describe("TerritoryLibrary", function () {
 
             const flowPercentage = 10; // 10% resources flow through connections
 
-            const resourceFlows = await territoryLibrary.calculateResourceFlow(
+            const resourceFlows = await territoryLibraryWrapper.calculateResourceFlow(
                 territoryResourceRates,
                 adjacencyList,
                 connectionStrengths,
