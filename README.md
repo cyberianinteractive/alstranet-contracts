@@ -41,7 +41,7 @@ Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/cyberianinteractive/alstranet-contracts.git
 cd alstranet-contracts
-yarn install
+npm install
 ```
 
 Create a `.env` file in the root directory based on `.env.example`:
@@ -57,31 +57,31 @@ ETHERSCAN_API_KEY=your_etherscan_api_key
 ### Compile contracts
 
 ```bash
-yarn compile
+npx hardhat compile
 ```
 
 ### Run tests
 
 ```bash
-yarn test
+npx hardhat test
 ```
 
 ### Run a local blockchain node
 
 ```bash
-yarn node
+npx hardhat node
 ```
 
 ### Deploy contracts to a local network
 
 ```bash
-yarn deploy
+npx hardhat deploy
 ```
 
 ### Deploy contracts to a specific network
 
 ```bash
-yarn deploy --network <network-name>
+npx hardhat deploy --network <network-name>
 ```
 
 ## Main Contracts
@@ -188,7 +188,7 @@ The project uses hardhat-deploy for structured deployments. The deployment seque
 To deploy to a specific network:
 
 ```bash
-yarn deploy --network mainnet
+npx hardhat deploy --network mainnet
 ```
 
 ### Deployment Verification
@@ -196,7 +196,7 @@ yarn deploy --network mainnet
 After deployment, verify your contracts on the blockchain explorer:
 
 ```bash
-yarn verify --network mainnet
+npx hardhat verify --network mainnet
 ```
 
 ## Security Considerations
