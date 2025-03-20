@@ -39,8 +39,8 @@ The Faction Wars ecosystem consists of the following main components:
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-repo/faction-wars.git
-cd faction-wars
+git clone https://github.com/cyberianinteractive/alstranet-contracts.git
+cd alstranet-contracts
 yarn install
 ```
 
@@ -122,7 +122,7 @@ The major contract interactions are:
 ### Project Structure
 
 ```
-faction-wars/
+alstranet-contracts/
 ├── contracts/           # Solidity smart contracts
 │   ├── base/            # Base contracts
 │   ├── interfaces/      # Contract interfaces
