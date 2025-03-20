@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600">
+  <!-- Background -->
+  <rect width="1000" height="600" fill="#f8f9fa" rx="10" ry="10" />
+  
+  <!-- Title -->
+  <text x="500" y="40" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#333">Faction Wars System Architecture</text>
+  
+  <!-- Governance Layer -->
+  <rect x="350" y="70" width="300" height="80" rx="5" ry="5" fill="#4b6cb7" fill-opacity="0.7" />
+  <text x="500" y="110" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Governance Layer</text>
+  <text x="500" y="135" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">BaseGovernor | TimelockController</text>
+
+  <!-- Core Token -->
+  <rect x="100" y="180" width="200" height="80" rx="5" ry="5" fill="#1d976c" fill-opacity="0.7" />
+  <text x="200" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Core Token</text>
+  <text x="200" y="245" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">AlstraToken (ALSTRA)</text>
+
+  <!-- Registry Layer -->
+  <rect x="350" y="180" width="300" height="80" rx="5" ry="5" fill="#6a11cb" fill-opacity="0.7" />
+  <text x="500" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Registry Layer</text>
+  <text x="500" y="245" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">FactionRegistry | TerritoryRegistry</text>
+
+  <!-- Economic Mechanics -->
+  <rect x="700" y="180" width="200" height="80" rx="5" ry="5" fill="#eb3349" fill-opacity="0.7" />
+  <text x="800" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Treasury</text>
+  <text x="800" y="245" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">TreasuryManagement</text>
+
+  <!-- Gameplay Mechanics -->
+  <rect x="100" y="290" width="200" height="80" rx="5" ry="5" fill="#F37335" fill-opacity="0.7" />
+  <text x="200" y="330" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Territory Control</text>
+  <text x="200" y="355" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">TerritoryStaking</text>
+
+  <rect x="350" y="290" width="300" height="80" rx="5" ry="5" fill="#8E2DE2" fill-opacity="0.7" />
+  <text x="500" y="330" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Asset Trading</text>
+  <text x="500" y="355" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">NFTMarketplace</text>
+
+  <!-- Libraries Layer -->
+  <rect x="150" y="410" width="700" height="60" rx="5" ry="5" fill="#4A00E0" fill-opacity="0.7" />
+  <text x="500" y="445" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Utility Libraries</text>
+  <text x="500" y="465" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">TerritoryLib | FactionLib | StakingLib | FeeLib | RevenueLib | MarketplaceLib | AccessControlLib</text>
+
+  <!-- Player View -->
+  <rect x="350" y="510" width="300" height="60" rx="5" ry="5" fill="#2C3E50" fill-opacity="0.7" />
+  <text x="500" y="545" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Game Client / dApp</text>
+
+  <!-- Connections - Core Token to other components -->
+  <path d="M 200 260 C 200 260, 200 290, 200 290" stroke="#1d976c" stroke-width="3" fill="none" />
+  <path d="M 200 260 C 200 265, 500 265, 500 290" stroke="#1d976c" stroke-width="3" fill="none" />
+  <path d="M 200 260 C 200 265, 800 265, 800 260" stroke="#1d976c" stroke-width="3" fill="none" />
+
+  <!-- Connections - Registry to other components -->
+  <path d="M 500 260 C 500 260, 500 290, 500 290" stroke="#6a11cb" stroke-width="3" fill="none" />
+  <path d="M 500 260 C 500 265, 200 265, 200 290" stroke="#6a11cb" stroke-width="3" fill="none" />
+  <path d="M 500 260 C 500 265, 800 265, 800 260" stroke="#6a11cb" stroke-width="3" fill="none" />
+
+  <!-- Connections - Governance to Registries and Token -->
+  <path d="M 500 150 C 500 150, 500 180, 500 180" stroke="#4b6cb7" stroke-width="3" fill="none" />
+  <path d="M 500 150 C 500 165, 200 165, 200 180" stroke="#4b6cb7" stroke-width="3" fill="none" />
+  <path d="M 500 150 C 500 165, 800 165, 800 180" stroke="#4b6cb7" stroke-width="3" fill="none" />
+
+  <!-- Connections - Treasury to other components -->
+  <path d="M 800 260 C 800 275, 500 275, 500 290" stroke="#eb3349" stroke-width="3" fill="none" />
+  <path d="M 800 260 C 800 275, 200 275, 200 290" stroke="#eb3349" stroke-width="3" fill="none" />
+
+  <!-- Connections - NFTMarketplace to Libraries -->
+  <path d="M 500 370 C 500 370, 500 410, 500 410" stroke="#8E2DE2" stroke-width="3" fill="none" />
+
+  <!-- Connections - TerritoryStaking to Libraries -->
+  <path d="M 200 370 C 200 390, 500 390, 500 410" stroke="#F37335" stroke-width="3" fill="none" />
+
+  <!-- Connections - Libraries to Player View -->
+  <path d="M 500 470 C 500 470, 500 510, 500 510" stroke="#4A00E0" stroke-width="3" fill="none" />
+
+  <!-- Legend -->
+  <rect x="50" y="40" width="20" height="20" fill="#4b6cb7" fill-opacity="0.7" />
+  <text x="75" y="55" font-family="Arial, sans-serif" font-size="12" fill="#333">Governance</text>
+  
+  <rect x="150" y="40" width="20" height="20" fill="#1d976c" fill-opacity="0.7" />
+  <text x="175" y="55" font-family="Arial, sans-serif" font-size="12" fill="#333">Token</text>
+  
+  <rect x="225" y="40" width="20" height="20" fill="#6a11cb" fill-opacity="0.7" />
+  <text x="250" y="55" font-family="Arial, sans-serif" font-size="12" fill="#333">Registry</text>
+</svg>

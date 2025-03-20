@@ -1,4 +1,4 @@
-# Police & Thief Ecosystem - Implementation Plan
+# Faction Wars Ecosystem - Implementation Plan
 
 ## Phase 1: Core Libraries
 

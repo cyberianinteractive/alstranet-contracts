@@ -78,8 +78,21 @@ const deployTestWrappers: DeployFunction = async function (hre: HardhatRuntimeEn
         console.log(`Reusing existing FeeLibraryTestWrapper at ${feeLibraryWrapperResult.address}`);
     }
 
+    // Deploy RevenueLibraryTestWrapper
+    console.log("Deploying RevenueLibraryTestWrapper...");
+    const revenueLibraryWrapperResult = await deploy('RevenueLibraryTestWrapper', {
+        from: deployer,
+        log: true,
+        skipIfAlreadyDeployed: true
+    });
+
+    if (revenueLibraryWrapperResult.newlyDeployed) {
+        console.log(`RevenueLibraryTestWrapper deployed at ${revenueLibraryWrapperResult.address}`);
+    } else {
+        console.log(`Reusing existing RevenueLibraryTestWrapper at ${revenueLibraryWrapperResult.address}`);
+    }
+
     // Additional test wrappers would be deployed here
-    // e.g., RevenueLibraryTestWrapper, etc.
 
     console.log("Test wrapper deployment complete.");
 };
@@ -91,7 +104,8 @@ deployTestWrappers.tags = [
     'TerritoryLibraryTestWrapper', 
     'StakingLibraryTestWrapper', 
     'FactionLibraryTestWrapper',
-    'FeeLibraryTestWrapper'
+    'FeeLibraryTestWrapper',
+    'RevenueLibraryTestWrapper'
 ];
 
 // Make this run after other deployments

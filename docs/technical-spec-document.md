@@ -1,4 +1,4 @@
-# Police & Thief Ecosystem - Technical Specification
+# Faction Wars Ecosystem - Technical Specification
 
 **Version:** 1.0  
 **Date:** March 11, 2025  
@@ -60,7 +60,7 @@
 
 ## 1. Executive Summary
 
-This technical specification document provides comprehensive implementation details for the core smart contracts of the Police & Thief ecosystem. The system enables faction-based gameplay with territory control mechanics, economic operations, and decentralized governance within an NFT-powered game economy on the AlstraNet blockchain.
+This technical specification document provides comprehensive implementation details for the core smart contracts of the Faction Wars ecosystem. The system enables faction-based gameplay with territory control mechanics, economic operations, and decentralized governance within an NFT-powered game economy on the AlstraNet blockchain.
 
 The specification describes five main contracts and their supporting libraries:
 
@@ -710,7 +710,7 @@ library StorageLibrary {
 
 #### 4.1.1 Purpose
 
-The FactionRegistry manages faction membership, ranks, and reputation for all players within the Police & Thief ecosystem. It serves as the source of truth for faction-related data that other contracts (such as TerritoryStaking and NFTMarketplace) rely on for authorization and functionality.
+The FactionRegistry manages faction membership, ranks, and reputation for all players within the Faction Wars ecosystem. It serves as the source of truth for faction-related data that other contracts (such as TerritoryStaking and NFTMarketplace) rely on for authorization and functionality.
 
 #### 4.1.2 Data Structures
 
@@ -942,7 +942,7 @@ event RoleUpdated(uint8 indexed factionId, uint8 indexed roleId, string name, ui
 
 #### 4.2.1 Purpose
 
-The TerritoryRegistry defines and manages territory zones and their properties, serving as the source of truth for territory data in the Police & Thief ecosystem. It tracks economic values, resource generation rates, and faction control status for all territories.
+The TerritoryRegistry defines and manages territory zones and their properties, serving as the source of truth for territory data in the Faction Wars ecosystem. It tracks economic values, resource generation rates, and faction control status for all territories.
 
 #### 4.2.2 Data Structures
 
@@ -3200,7 +3200,7 @@ function updateMarketplaceFee(uint256 newFeePercentage) external {
 
 ### 6.1 Access Control Strategy
 
-The Police & Thief ecosystem uses a fine-grained access control model based on both explicit roles (via OpenZeppelin's AccessControl) and dynamic permissions based on faction membership and territory control.
+The Faction Wars ecosystem uses a fine-grained access control model based on both explicit roles (via OpenZeppelin's AccessControl) and dynamic permissions based on faction membership and territory control.
 
 #### 6.1.1 Role-Based Access Control
 
@@ -4058,7 +4058,7 @@ describe("Market Manipulation Protection", function() {
 
 ### 9.1 Deployment Sequence
 
-The deployment of the Police & Thief ecosystem contracts should follow this specific sequence to ensure proper dependency resolution:
+The deployment of the Faction Wars ecosystem contracts should follow this specific sequence to ensure proper dependency resolution:
 
 1. **AlstraToken**
    - Deploy base token first as it's needed by most other contracts
@@ -4457,7 +4457,7 @@ async function setupContractInteractions(
 
 ### 10.1 Upgrade Patterns
 
-All contracts in the Police & Thief ecosystem will follow the Universal Upgradeable Proxy Standard (UUPS) pattern to enable future upgrades while maintaining the same contract address and state.
+All contracts in the Faction Wars ecosystem will follow the Universal Upgradeable Proxy Standard (UUPS) pattern to enable future upgrades while maintaining the same contract address and state.
 
 #### 10.1.1 UUPS Implementation
 
@@ -5034,7 +5034,7 @@ event TerritoryTaxRateChanged(uint256 indexed territoryId, uint256 oldRate, uint
 
 ### 11.3 Integration with AlstraToken
 
-The AlstraToken serves as the foundation of the economic system in the Police & Thief ecosystem. All contracts interacting with AlstraToken should follow these integration patterns:
+The AlstraToken serves as the foundation of the economic system in the Faction Wars ecosystem. All contracts interacting with AlstraToken should follow these integration patterns:
 
 #### 11.3.1 Token Transfer Patterns
 
@@ -5108,7 +5108,7 @@ function _transferWithFeesCompensation(
 
 ### 11.4 Integration with BaseGovernor
 
-The Police & Thief ecosystem uses the BaseGovernor contract for governance. Contracts that need governance control should implement these patterns:
+The Faction Wars ecosystem uses the BaseGovernor contract for governance. Contracts that need governance control should implement these patterns:
 
 #### 11.4.1 Governance-Controlled Functions
 
@@ -5183,6 +5183,6 @@ function createProposal(
 }
 ```
 
-This comprehensive technical specification document provides the foundation for developing the Police & Thief ecosystem contracts according to best practices. It emphasizes code reusability through libraries, secure implementation patterns, and integration with the governance system.
+This comprehensive technical specification document provides the foundation for developing the Faction Wars ecosystem contracts according to best practices. It emphasizes code reusability through libraries, secure implementation patterns, and integration with the governance system.
 
 Developers implementing these contracts should follow the guidelines and implementation considerations outlined in this document to ensure security, efficiency, and proper integration between the different components of the ecosystem.
